@@ -17,34 +17,147 @@
   function decolate() {
     for (let i = 0; i < N; i++) {
       const cell = document.getElementById("cell" + i);
-      if (Math.floor(i / 9) === 0) cell.style.borderTopWidth = "3px";
-      if (Math.floor(i / 9) % 3 === 2) cell.style.borderBottomWidth = "3px";
-      if (i % 9 === 0) cell.style.borderLeftWidth = "3px";
-      if (i % 9 % 3 === 2) cell.style.borderRightWidth = "3px";
+      const color="#262626";
+      // const color="#7d7d7d";
+      if (Math.floor(i / 9) === 0) cell.style.borderTop = color+" solid 4px";
+      if (Math.floor(i / 9) % 3 === 2) cell.style.borderBottom = color + " solid 4px";
+      if (i % 9 === 0) cell.style.borderLeft = color + " solid 4px";
+      if (i % 9 % 3 === 2) cell.style.borderRight = color + " solid 4px";
 
       //cell.style.borderWidth="3px";
     }
   }
 
   function display(ans) {
-    decolate();
-    let line = "";
     for (let i = 0; i < N; i++) {
-      const cell = document.getElementById("cell" + i);
-      cell.innerHTML = ans[i];
-      if (i % 27 === 0) {
-        console.log(" _________________ ");
-        line = "";
+      const input = document.getElementById("room" + i);
+      input.tabIndex="0";
+      input.addEventListener("focus", () => {
+        input.style.backgroundColor = "#ABE1FA";
+      });
+      input.addEventListener("blur", () => {
+        input.style.backgroundColor = "transparent";
+      });
+      input.addEventListener("keydown", (e) => {
+        if (e.code === "ArrowDown") {
+          let j = i + 9;
+          if (j < 81) {
+            document.getElementById("room" + j).focus();
+          }
+        }
+        else if (e.code === "ArrowUp") {
+          let j = i - 9;
+          if (j >= 0) {
+            document.getElementById("room" + j).focus();
+          }
+        }
+        else if (e.code === "ArrowRight") {
+          let j = i % 9 + 1;
+          if (j < 9) {
+            document.getElementById("room" + (Math.floor(i / 9) * 9 + j)).focus();
+          }
+        }
+        else if (e.code === "ArrowLeft") {
+          let j = i % 9 - 1;
+          if (j >= 0) {
+            document.getElementById("room" + (Math.floor(i / 9) * 9 + j)).focus();
+          }
+        }
+        else if (e.code === "Tab"||e.code==="Enter"){
+          e.preventDefault();
+          if(e.shiftKey===false){
+            let j = i+1;
+            if (j < 81) {
+              document.getElementById("room" + j).focus();
+            }
+          }
+          else{
+            let j = i - 1;
+            if (j >= 0) {
+              document.getElementById("room" + j).focus();
+            }
+          }
+        }
+      })
+
+      if (ans[i] !== "0") {
+        input.classList.add("fixed");
+        input.innerHTML = ans[i];
       }
-      if (i % 9 === 0) line += "|";
-      line += ans[i];
-      line += (i % 3 != 2 ? " " : "|");
-      if (i % 9 === 8) {
-        console.log(line);
-        line = "";
+      else {
+        input.classList.remove("fixed");
+        input.addEventListener("keydown",(e)=>{
+          if (e.key === "1") input.innerHTML="1";
+          else if (e.key === "2") input.innerHTML = "2";
+          else if (e.key === "3") input.innerHTML = "3";
+          else if (e.key === "4") input.innerHTML = "4";
+          else if (e.key === "5") input.innerHTML = "5";
+          else if (e.key === "6") input.innerHTML = "6";
+          else if (e.key === "7") input.innerHTML = "7";
+          else if (e.key === "8") input.innerHTML = "8";
+          else if (e.key === "9") input.innerHTML = "9";
+          else if (e.key === "0"||e.key === "Backspace"||e.key === "Delete") {
+            input.innerHTML = "";
+          }
+        });
       }
     }
-    console.log(" _________________ ");
+  }
+
+  function compress(str){
+    let res="";
+    let z_cnt=0;
+    for(let i=0;i<str.length;i++){
+      if(str[i]==="0")z_cnt++;
+      else{
+        while(z_cnt>0){
+          if(z_cnt>=26){
+            res+="z";
+            z_cnt-=26;
+          }
+          else{
+            res+=String.fromCodePoint(z_cnt+'a'.charCodeAt()-1);
+            z_cnt=0;
+          }
+        }
+        res+=str[i];
+      }
+    }
+    while (z_cnt > 0) {
+      if (z_cnt >= 26) {
+        res += "z";
+        z_cnt -= 26;
+      }
+      else {
+        res += String.fromCodePoint(z_cnt + 'a'.charCodeAt() - 1);
+        z_cnt = 0;
+      }
+    }
+    return res;
+  }
+
+  function deploy(str) {
+    let res = "";
+    for (let i = 0; i < str.length; i++) {
+      if (/^[a-z]+$/.test(str[i])) {
+        for (let j = 0; j < str[i].charCodeAt() - 'a'.charCodeAt() + 1; j++) {
+          res += "0";
+        }
+      }
+      else if (/^[0-9]+$/.test(str[i])) {
+        res += str[i];
+      }
+    }
+    return res;
+  }
+
+  function seedCheck(str){
+    str = str.trim();
+    if(!/^[0-9a-zA-Z]+$/.test(str))return false;
+    str=deploy(str);
+    if(str.length!==N)return false;
+    display(str);
+    return true;
   }
 
   function dfs(num){
@@ -84,6 +197,7 @@
   }
 
   function judge(input) {
+    const startTime = performance.now();
     cnt=0;
     let flag=true;
     for(let i=0;i<N;i++){
@@ -108,23 +222,37 @@
     if(dfs(0)){
       if (cnt === 0) {
         console.log("解が存在しません");
-        return 0;
+        return 1;
       }
       
       display(ans);
+      const endTime = performance.now();
+      console.log(Math.floor(endTime - startTime) + " ms");
+      return 3;
     }
     else{
       console.log("複数の解が存在します");
-      return 0;
+      return 2;
     }
   }
 
-  
+  function getSeed(){
+    const seed = document.getElementById("seed").value;
+    if (!seedCheck(seed)) console.log("No");
+  }
 
-  const startTime = performance.now();
-  judge("060040000408200950200830000000009507107000030340000200006050004000000090005006000");
+  //decolate();
+
+  //judge("060040000408200950200830000000009507107000030340000200006050004000000090005006000");
   //judge("800000000003600000070090200050007000000045700000100030001000068008500010090000400");
-  const endTime = performance.now();
-  console.log(Math.floor(endTime - startTime)+ " ms");
   //display("060040000408200950200830000000009507107000030340000200006050004000000090005006000");
+
+  const button=document.getElementById("submit");
+  button.addEventListener("click",getSeed);
+
+  seedCheck("a6b4d4a82b95a2b83i95a71a7d3a34d2d6a5c4g9c5b6c");
+
+  console.log(compress("060040000408200950200830000000009507107000030340000200006050004000000090005006000"));
+
+  //seedCheck("12345abA ");
 }
