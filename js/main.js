@@ -483,5 +483,5 @@
   const button=document.getElementById("submit");
   button.addEventListener("click",getSeed);
 
-  setInterval(getTimer,100);
+  setInterval(getTimer,250);
 }
