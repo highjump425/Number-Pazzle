@@ -13,30 +13,35 @@
   let blocks = Array(9);
   blocks.fill(0);
   let ans = "";
+  let init = "";
+  let select = -1;
+  let left = N;
+  let timerStop=performance.now();
+  let timerStart = performance.now()+1;
 
-  function decolate() {
-    for (let i = 0; i < N; i++) {
-      const cell = document.getElementById("cell" + i);
-      const color="#262626";
-      // const color="#7d7d7d";
-      if (Math.floor(i / 9) === 0) cell.style.borderTop = color+" solid 4px";
-      if (Math.floor(i / 9) % 3 === 2) cell.style.borderBottom = color + " solid 4px";
-      if (i % 9 === 0) cell.style.borderLeft = color + " solid 4px";
-      if (i % 9 % 3 === 2) cell.style.borderRight = color + " solid 4px";
-
-      //cell.style.borderWidth="3px";
-    }
-  }
-
-  function display(ans) {
+  function setup(){
     for (let i = 0; i < N; i++) {
       const input = document.getElementById("room" + i);
-      input.tabIndex="0";
+      input.innerHTML="";
+      input.tabIndex = "0";
       input.addEventListener("focus", () => {
         input.style.backgroundColor = "#ABE1FA";
       });
       input.addEventListener("blur", () => {
-        input.style.backgroundColor = "transparent";
+        if(input.classList.contains("fixed")){
+          if(input.style.color=="red"){
+            input.style.backgroundColor = "#F5C9C6";
+          }
+          else if (input.style.color == "blue"){
+            input.style.backgroundColor = "lightblue";
+          }
+          else{
+            input.style.backgroundColor = "white";
+          }
+        }
+        else{
+          input.style.backgroundColor = "white";
+        }
       });
       input.addEventListener("keydown", (e) => {
         if (e.code === "ArrowDown") {
@@ -63,44 +68,197 @@
             document.getElementById("room" + (Math.floor(i / 9) * 9 + j)).focus();
           }
         }
-        else if (e.code === "Tab"||e.code==="Enter"){
+        else if (e.code === "Tab" || e.code === "Enter") {
           e.preventDefault();
-          if(e.shiftKey===false){
-            let j = i+1;
+          if (e.shiftKey === false) {
+            let j = i + 1;
             if (j < 81) {
               document.getElementById("room" + j).focus();
             }
           }
-          else{
+          else {
             let j = i - 1;
             if (j >= 0) {
               document.getElementById("room" + j).focus();
             }
           }
         }
-      })
+      });
+    }
+  }
 
-      if (ans[i] !== "0") {
+  function lock(){
+    for (let i = 0; i < N; i++) {
+      const input = document.getElementById("room" + i);
+      input.innerHTML = "";
+      input.style.backgroundColor="white";
+      input.style.color="black";
+      input.removeEventListener("keydown", keyInput);
+      input.removeEventListener("click", tapInput);
+      if(!input.classList.contains("fixed")){
         input.classList.add("fixed");
-        input.innerHTML = ans[i];
+      }
+    }
+  }
+
+  function unlock(){
+    for (let i = 0; i < N; i++) {
+      const input = document.getElementById("room" + i);
+      input.innerHTML = "";
+      if (input.classList.contains("fixed")) {
+        input.classList.remove("fixed");
+      }
+    }
+  }
+
+  function keyInput(e){
+    let empty = (e.target.innerHTML=== "");
+    if (e.key === "1") {
+      e.target.innerHTML="1";
+      if(empty)left--;
+    }
+    else if (e.key === "2") {
+      e.target.innerHTML = "2";
+      if (empty) left--;
+    }
+    else if (e.key === "3"){
+      e.target.innerHTML = "3";
+      if (empty) left--;
+    } 
+    else if (e.key === "4") {
+      e.target.innerHTML = "4";
+      if (empty) left--;
+    }
+    else if (e.key === "5") {
+      e.target.innerHTML = "5";
+      if (empty) left--;
+    }
+    else if (e.key === "6"){
+      e.target.innerHTML = "6";
+      if(empty)left--;
+    }
+    else if (e.key === "7") {
+      e.target.innerHTML = "7";
+      if (empty) left--;
+    }
+    else if (e.key === "8") {
+      e.target.innerHTML = "8";
+      if (empty) left--;
+    }
+    else if (e.key === "9") {
+      e.target.innerHTML = "9";
+      if (empty) left--;
+    }
+    else if (e.key === "0"||e.key === "Backspace"||e.key === "Delete") {
+      e.target.innerHTML = "";
+      if(!empty)left++;
+    }
+    else if(e.key === "Enter"&&select!==-1){
+      if (select === 0) {
+        e.target.innerHTML = "";
+        if (!empty) left++;
       }
       else {
-        input.classList.remove("fixed");
-        input.addEventListener("keydown",(e)=>{
-          if (e.key === "1") input.innerHTML="1";
-          else if (e.key === "2") input.innerHTML = "2";
-          else if (e.key === "3") input.innerHTML = "3";
-          else if (e.key === "4") input.innerHTML = "4";
-          else if (e.key === "5") input.innerHTML = "5";
-          else if (e.key === "6") input.innerHTML = "6";
-          else if (e.key === "7") input.innerHTML = "7";
-          else if (e.key === "8") input.innerHTML = "8";
-          else if (e.key === "9") input.innerHTML = "9";
-          else if (e.key === "0"||e.key === "Backspace"||e.key === "Delete") {
-            input.innerHTML = "";
-          }
-        });
+        e.target.innerHTML = select;
+        if(empty)left--;
       }
+    }
+    if(left===0)displayAns();
+  }
+
+  function tapInput(e){
+    let empty=(e.target.innerHTML==="");
+    if (select !== -1) {
+      if (select === 0) {
+        e.target.innerHTML = "";
+        if(!empty)left++;
+      }
+      else {
+        e.target.innerHTML = select;
+        if(empty)left--;
+      }
+    }
+    if(left===0)displayAns();
+  }
+
+  function beginTimer() {
+    timerStart = performance.now();
+    timerStop = performance.now();
+  }
+
+  function endTimer() {
+    timerStop = performance.now();
+    timerStart = performance.now()+1;
+  }
+
+  function getTimer() {
+    if (timerStop < timerStart) return false;
+    const timer = document.getElementById("timer");
+    let sec = Math.floor(performance.now() - timerStart);
+    sec = Math.floor(sec / 1000);
+    let min = Math.floor(sec / 60);
+    sec = sec % 60;
+    let str="00"+sec;
+    timer.innerHTML = min + ":" + str.slice(-2);
+  }
+
+  function display(place) {
+    left=N;
+    for (let i = 0; i < N; i++) {
+      const input = document.getElementById("room" + i);
+      input.style.backgroundColor="white";
+      if (place[i] !== "0") {
+        left--;
+        input.classList.add("fixed");
+        input.style.color="black";
+        input.innerHTML = place[i];
+      }
+      else {
+        input.innerHTML="";
+        input.style.color="blue";
+        input.classList.remove("fixed");
+        input.addEventListener("keydown",keyInput);
+        input.addEventListener("click",tapInput);
+      }
+    }
+  }
+
+  function displayAns(){
+    getTimer();
+    endTimer();
+    for(let i=0;i<N;i++){
+      const room = document.getElementById("room" + i);
+      if(init[i]!=="0"||room.classList.contains("fixed"))continue;
+      room.classList.add("fixed");
+      room.removeEventListener("keydown",keyInput);
+      room.removeEventListener("click",tapInput);
+      if(ans[i]===room.innerHTML){
+        room.style.color="blue";
+        room.style.backgroundColor = "lightblue";
+      }
+      else{
+        room.style.color="red";
+        room.innerHTML=ans[i];
+        room.style.backgroundColor="#F5C9C6";
+      }
+    }
+  }
+
+  function displayRestart(){
+    left=N;
+    beginTimer();
+    for (let i = 0; i < N; i++) {
+      const room = document.getElementById("room" + i);
+      if (init[i] !== "0") {
+        left--;
+        continue;
+      }
+      room.classList.remove("fixed");
+      room.addEventListener("keydown", keyInput);
+      room.addEventListener("click", tapInput);
+      room.style.color="blue";
+      room.style.backgroundColor="white"
+      room.innerHTML="";
     }
   }
 
@@ -151,12 +309,46 @@
     return res;
   }
 
+  function setError(e_num){
+    const error=document.getElementById("error");
+    const tools = document.getElementById("tools");
+    tools.style.display="none";
+    if(e_num===0){
+      error.innerHTML="";
+      error.style.display="none";
+    }
+    else {
+      if (e_num === 1) error.innerHTML = "正しいシリアルコードを入力してください。";
+      else if (e_num === 2) error.innerHTML = "不適切な初期配置です";
+      else if (e_num === 3) error.innerHTML = "解が存在しません";
+      else if (e_num === 4) error.innerHTML = "複数の解が存在します";
+      else if(e_num===5)error.innerHTML = "すでに完成しています";
+      error.style.display="inline";
+    }
+  }
+
+  function setTools(){
+    const tools=document.getElementById("tools");
+    tools.style.display="flex";
+  }
+
   function seedCheck(str){
     str = str.trim();
-    if(!/^[0-9a-zA-Z]+$/.test(str))return false;
+    const error = document.getElementById("error");
+    if(str.length===0){
+      setError(0);
+      return false;
+    }
+    if(!/^[0-9a-zA-Z]+$/.test(str)){
+      setError(1);
+      return false;
+    }
     str=deploy(str);
-    if(str.length!==N)return false;
-    display(str);
+    if(str.length!==N){
+      setError(1);
+      return false;
+    }
+    error.innerHTML="";
     return true;
   }
 
@@ -198,7 +390,13 @@
 
   function judge(input) {
     const startTime = performance.now();
+    let hole=0;
     cnt=0;
+    init=input;
+    grid.fill(0);
+    columns.fill(0);
+    rows.fill(0);
+    blocks.fill(0);
     let flag=true;
     for(let i=0;i<N;i++){
       let r = Math.floor(i / 9);
@@ -207,6 +405,7 @@
       let v = Number(input[i]);
       grid[i]=v;
       if(v===0)continue;
+      hole++;
       if (columns[c] & Flag[v - 1]) flag = false;
       else columns[c] |= Flag[v - 1];
       if (rows[r] & Flag[v - 1]) flag = false;
@@ -215,44 +414,74 @@
       else blocks[b] |= Flag[v - 1];
     }
 
-    if(!flag){
-      console.log("不適切な初期配置です");
-      return 0;
-    }
+    if(!flag)return 2;
     if(dfs(0)){
-      if (cnt === 0) {
-        console.log("解が存在しません");
-        return 1;
-      }
-      
-      display(ans);
+      if (cnt === 0)return 3;
+      if(hole===5)return 5;
+      //display(ans);
       const endTime = performance.now();
       console.log(Math.floor(endTime - startTime) + " ms");
-      return 3;
+      return 0;
     }
-    else{
-      console.log("複数の解が存在します");
-      return 2;
-    }
+    else return 4;
   }
 
   function getSeed(){
-    const seed = document.getElementById("seed").value;
-    if (!seedCheck(seed)) console.log("No");
+    let seed = document.getElementById("seed").value;
+    if (!seedCheck(seed)){
+      lock();
+      return;
+    }
+    seed=deploy(seed);
+    let res=judge(seed);
+    setError(res);
+    if(res!==0){
+      lock();
+      return;
+    }
+    setTools();
+    unlock();
+    display(seed);
+    beginTimer();
   }
 
-  //decolate();
+  setup();
 
-  //judge("060040000408200950200830000000009507107000030340000200006050004000000090005006000");
-  //judge("800000000003600000070090200050007000000045700000100030001000068008500010090000400");
-  //display("060040000408200950200830000000009507107000030340000200006050004000000090005006000");
+  const answer=document.getElementById("answer");
+  answer.addEventListener('click',displayAns);
+
+  const restart=document.getElementById("restart");
+  restart.addEventListener('click',displayRestart);
+
+  const watch=document.getElementById("watch");
+  watch.addEventListener("click",()=>{
+    const tools= document.getElementById("tools");
+    tools.classList.toggle("hide");
+  });
+
+  for(let i=0;i<10;i++){
+    const button=document.getElementById("switch"+i);
+    button.addEventListener('click',(e)=>{
+      if(select==-1){
+        button.classList.add("selected");
+        select=i;
+      }
+      else if(select===i){
+        button.classList.remove("selected");
+        select = -1;
+      }
+      else{
+        const erase=document.getElementById("switch"+select);
+        erase.classList.remove("selected");
+        button.classList.add("selected");
+        select=i;
+      }
+      button.focus();
+    });
+  }
 
   const button=document.getElementById("submit");
   button.addEventListener("click",getSeed);
 
-  seedCheck("a6b4d4a82b95a2b83i95a71a7d3a34d2d6a5c4g9c5b6c");
-
-  console.log(compress("060040000408200950200830000000009507107000030340000200006050004000000090005006000"));
-
-  //seedCheck("12345abA ");
+  setInterval(getTimer,100);
 }
