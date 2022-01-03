@@ -21,6 +21,10 @@
   let left = N;
   let timerStop=performance.now();
   let timerStart = performance.now()+1;
+  let trueColor="#235BC8";
+  let wrongColor="#ED1A3D";
+  let trueBack = "#ABE1FA";
+  let wrongBack = "#F5C9C6";
 
   function shuffle(arr){
     for(let i=arr.length-1;i>0;i--){
@@ -35,15 +39,15 @@
       input.innerHTML="";
       input.tabIndex = "0";
       input.addEventListener("focus", () => {
-        input.style.backgroundColor = "#ABE1FA";
+        input.style.backgroundColor = trueBack;
       });
       input.addEventListener("blur", () => {
         if(input.classList.contains("fixed")){
-          if(input.style.color=="red"){
-            input.style.backgroundColor = "#F5C9C6";
+          if(input.style.color==wrongColor){
+            input.style.backgroundColor = wrongBack;
           }
-          else if (input.style.color == "blue"){
-            input.style.backgroundColor = "lightblue";
+          else if (input.style.color == trueColor){
+            input.style.backgroundColor = trueBack;
           }
           else{
             input.style.backgroundColor = "white";
@@ -225,7 +229,7 @@
       }
       else {
         input.innerHTML="";
-        input.style.color="blue";
+        input.style.color=trueColor;
         input.classList.remove("fixed");
         input.addEventListener("keydown",keyInput);
         input.addEventListener("click",tapInput);
@@ -243,13 +247,13 @@
       room.removeEventListener("keydown",keyInput);
       room.removeEventListener("click",tapInput);
       if(ans[i]===room.innerHTML){
-        room.style.color="blue";
-        room.style.backgroundColor = "lightblue";
+        room.style.color=trueColor;
+        room.style.backgroundColor = trueBack;
       }
       else{
-        room.style.color="red";
+        room.style.color=wrongColor;
         room.innerHTML=ans[i];
-        room.style.backgroundColor="#F5C9C6";
+        room.style.backgroundColor=wrongBack;
       }
     }
   }
@@ -266,7 +270,7 @@
       room.classList.remove("fixed");
       room.addEventListener("keydown", keyInput);
       room.addEventListener("click", tapInput);
-      room.style.color="blue";
+      room.style.color=trueColor;
       room.style.backgroundColor="white"
       room.innerHTML="";
     }
@@ -508,7 +512,6 @@
       else hole++;
       if(hole===target[d]+r)break;
     }
-    console.log(hole);
     document.getElementById("seed").value=compress(str);
     getSeed();
   }

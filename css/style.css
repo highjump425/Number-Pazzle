@@ -26,7 +26,7 @@ button{
   font-family: 'Yuji Syuku', serif;
   font-weight: bold;
   text-align: center;
-  font-size: min(48px,10vw);
+  font-size: min(56px,11vw);
   color:#FFFEF2;
   padding: 16px;
   margin-bottom: 24px;
@@ -34,9 +34,15 @@ button{
 }
 
 .intro p{
+  font-weight: normal;
   text-align: center;
-  font-size: 24px; 
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: min(24px,4.8vw); 
   margin: 16px 0;
+}
+
+.intro span{
+  font-weight: bold;
 }
 
 /* seed */
@@ -91,6 +97,7 @@ button{
   text-align: center;
   vertical-align: center;
   margin-bottom: 8px;
+  padding-top: 8px;
 }
 
 #error{
@@ -277,9 +284,11 @@ button{
   width: calc(3 * min(10vw,8vh,48px) + 4px);
   height: calc(3 * min(10vw,8vh,48px) + 4px);
 }
+
 .box:not(:nth-child(3n-2)){
   border-left:none;
 }
+
 .box:not(:nth-child(-n+3)){
   border-top:none;
 }
@@ -296,7 +305,7 @@ button{
   background-color: white;
   border: #797979 solid 1px;
   /* color:#007394; */
-  color:blue;
+  color: #235BC8;
   transition: opacity 0.2s;
 }
 
@@ -320,7 +329,7 @@ button{
   margin: 16px auto 0;
   padding: 0;
   justify-content: center;
-  margin-bottom: 15px;
+  margin-bottom: 24px;
 }
 
 .switch{
@@ -356,7 +365,18 @@ footer{
 }
 
 footer p{
-  text-align: right;
+  justify-content: right;
+  display: flex;
+  gap: 16px;
+}
+
+footer i{
+  font-size: 20px;
+  color: white;
+}
+
+footer p+p{
+  padding-top: 8px;
 }
 
 /* widescreen */
@@ -453,4 +473,10 @@ footer p{
     transform: scale(0.9);
   }
 
+  footer .container{
+    justify-content: right;
+    align-items: center;
+    display: flex;
+    gap: 16px;
+  }
 }
