@@ -12,12 +12,22 @@
   rows.fill(0);
   let blocks = Array(9);
   blocks.fill(0);
+  let order = [0,1,2,3,4,5,6,7,8,];
+  let perm = Array(N);
+  for(let i=0;i<N;i++)perm[i]=i;
   let ans = "";
   let init = "";
   let select = -1;
   let left = N;
   let timerStop=performance.now();
   let timerStart = performance.now()+1;
+
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      let j=Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+  }
 
   function setup(){
     for (let i = 0; i < N; i++) {
@@ -420,10 +430,108 @@
       if(hole===5)return 5;
       //display(ans);
       const endTime = performance.now();
-      console.log(Math.floor(endTime - startTime) + " ms");
+      // console.log(Math.floor(endTime - startTime) + " ms");
       return 0;
     }
     else return 4;
+  }
+
+  function dfs_r(num) {
+    if (num === N) {
+      cnt++;
+      ans = "";
+      for (let i = 0; i < N; i++) {
+        ans += grid[i];
+      }
+      return true;
+    }
+    let r = Math.floor(num / 9);
+    let c = num % 9;
+    let b = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+    let check = 0;
+    shuffle(order);
+    check |= columns[c];
+    check |= rows[r];
+    check |= blocks[b];
+    if (check === Full) return false;
+    for (let j = 0; j < 9; j++) {
+      let i=order[j];
+      if (check & Flag[i]) continue;
+      grid[num] = i + 1;
+      columns[c] |= Flag[i];
+      rows[r] |= Flag[i];
+      blocks[b] |= Flag[i];
+      if (dfs_r(num + 1)) return true;
+      grid[num] = 0;
+      columns[c] &= ~Flag[i];
+      rows[r] &= ~Flag[i];
+      blocks[b] &= ~Flag[i];
+    }
+    return false;
+  }
+
+  function genRand(){
+    grid.fill(0);
+    columns.fill(0);
+    rows.fill(0);
+    blocks.fill(0);
+    
+    if (dfs_r(0)) {
+      return Array.from(ans);
+    }
+    else return "";
+  }
+
+  function makePazzle(d=1){
+    let hole=0;
+    let str=genRand();
+
+    let s;
+    let r=Math.floor(Math.random()*5);
+    let target=[42,50,56,]
+
+    shuffle(perm);
+    if(d===2){
+      shuffle(order);
+      let x=String(order[0]+1);
+      let y=String(order[1]+1);
+      console.log(x);
+      for(let i=0;i<N;i++){
+        if(str[i]===x)str[i]="0";
+      }
+    }
+    for(let j=0;j<N;j++){
+      let i=perm[j];
+      s=str[i];
+      str[i]="0";
+      if(judge(str)!==0)str[i]=s;
+      else hole++;
+      if(hole===target[d]+r)break;
+    }
+    console.log(hole);
+    document.getElementById("seed").value=compress(str);
+    getSeed();
+  }
+
+  function getGame(){
+    newgame.classList.toggle("selected");
+    const balloon = document.getElementsByClassName("balloon")[0];
+    balloon.classList.toggle("show");
+  }
+
+  function getEasy(){
+    makePazzle(0);
+    getGame()
+  }
+
+  function getNormal(){
+    makePazzle(1);
+    getGame();
+  }
+
+  function getHard(){
+    makePazzle(2);
+    getGame();
   }
 
   function getSeed(){
@@ -445,19 +553,34 @@
     beginTimer();
   }
 
+  
+
   setup();
+
+  const newgame = document.getElementById("newgame");
+  newgame.addEventListener("click",getGame);
+
+  const watch = document.getElementById("watch");
+  watch.addEventListener("click", () => {
+    watch.classList.toggle("selected");
+    const tools = document.getElementById("tools");
+    tools.classList.toggle("hide");
+  });
+
+  const restart = document.getElementById("restart");
+  restart.addEventListener('click', displayRestart);
 
   const answer=document.getElementById("answer");
   answer.addEventListener('click',displayAns);
 
-  const restart=document.getElementById("restart");
-  restart.addEventListener('click',displayRestart);
+  const easy=document.getElementById("easy");
+  easy.addEventListener('click',getEasy);
 
-  const watch=document.getElementById("watch");
-  watch.addEventListener("click",()=>{
-    const tools= document.getElementById("tools");
-    tools.classList.toggle("hide");
-  });
+  const normal=document.getElementById("normal");
+  normal.addEventListener('click',getNormal);
+
+  const hard=document.getElementById("hard");
+  hard.addEventListener('click',getHard);
 
   for(let i=0;i<10;i++){
     const button=document.getElementById("switch"+i);
@@ -484,4 +607,7 @@
   button.addEventListener("click",getSeed);
 
   setInterval(getTimer,250);
+
+  // makePazzle();
+
 }
