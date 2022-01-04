@@ -112,7 +112,7 @@ button{
   display: flex;
   justify-content: center;
   align-items: end;
-  gap: min(5vw,4vh,24px);
+  gap: min(7vw,6vh,30px);
   transform: translateX(0);
   transition: transform 0.3s;
 }
@@ -123,8 +123,8 @@ button{
   opacity: 0;
   position: absolute;
   z-index: auto;
-  top: calc(1.3 * min(10vw,8vh,48px));
-  left: calc(50% - (6.5 * min(10vw,8vh,48px) + 4 * min(5vw,4vh,24px)) / 2 - 35px + (0.5 * min(10vw,8vh,48px)));
+  top: calc(1.4 * min(10vw,8vh,48px));
+  left: calc(50% - (6 * min(10vw,8vh,48px) + 4 * min(7vw,6vh,30px)) / 2 - 35px + (0.5 * min(10vw,8vh,48px)));
   padding: 8px;
   background-color: white;
   border-radius: 16px;
@@ -208,6 +208,7 @@ button{
   height: min(10vw,8vh,48px);
   border-radius: 10%;
   background-color: white;
+  transform: translateY(calc(-0.3 * min(10vw,8vh,48px)));
   transition:transform 0.2s, background-color 0.2s;
 }
 
@@ -221,7 +222,39 @@ button{
 }
 
 #tools button p.comment{
-  display:none;
+  display:inline-block;
+  position: absolute;
+  pointer-events: none;
+  color:black;
+  font-size: calc(0.25 * min(10vw,8vh,48px));
+}
+
+#newgame p.comment{
+  width: 7em;
+  top: calc(1 * min(10vw,8vh,48px));
+  left: calc(-3.5em + (min(10vw,8vh,48px) / 2));
+}
+
+#watch p.comment{
+  width: 7em;
+  top: calc(1 * min(10vw,8vh,48px));
+  left: calc(-3.5em + (min(10vw,8vh,48px) / 2));
+}
+
+#watch p.comment.hide{
+  opacity: 0;
+}
+
+#restart p.comment{
+  width: 6em;
+  top: calc(1 * min(10vw,8vh,48px));
+  left: calc(-3em + (min(10vw,8vh,48px) / 2));
+}
+
+#answer p.comment{
+  width: 6em;
+  top: calc(1 * min(10vw,8vh,48px));
+  left: calc(-3em + (min(10vw,8vh,48px) / 2));
 }
 
 #timer{
@@ -229,7 +262,7 @@ button{
   bottom: 0;
   color: #4c4948;
   height: calc(0.6 * min(10vw,8vh,48px));
-  width: calc(2.5 * min(10vw,8vh,48px));
+  width: calc(2 * min(10vw,8vh,48px));
   font-size: calc(0.6 * min(10vw,8vh,48px));
   text-align: right;
   opacity:1;
@@ -243,7 +276,7 @@ button{
 
 #tools.hide{
   transition: transform 0.3s 0.3s;
-  transform: translateX(calc(((6.5 * min(10vw,8vh,48px) + 4 * min(5vw,4vh,24px)) / 2) - ((4 * min(10vw,8vh,48px) + 3 * min(5vw,4vh,24px)) / 2)));
+  transform: translateX(calc(((6 * min(10vw,8vh,48px) + 4 * min(7vw,6vh,30px)) / 2) - ((4 * min(10vw,8vh,48px) + 3 * min(7vw,6vh,30px)) / 2)));
 }
 
 #tools button.selected{
@@ -262,6 +295,10 @@ button{
 
 #tools.hide #watch p{
   opacity: 0;
+}
+
+#tools.hide #watch p.hide{
+  opacity: 1;
 }
 
 /* grid */
@@ -400,6 +437,10 @@ footer p+p{
 
   .balloon li:active{
     transform:scale(0.98);
+  }
+
+  #tools button{
+    transform: translateY(0);
   }
 
   #tools button p.comment{
