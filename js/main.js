@@ -21,6 +21,7 @@
   let left = N;
   let timerStop=performance.now();
   let timerStart = performance.now()+1;
+  let cursor = "";
   let trueColor="#235BC8";
   let wrongColor="#ED1A3D";
   let trueBack = "#ABE1FA";
@@ -33,30 +34,64 @@
     }
   }
 
+  function roomFocus(e){
+    cursor = e.target;
+    e.target.style.backgroundColor = trueBack;
+    if(e.target.innerHTML!==""){
+      for(let i=0;i<N;i++){
+        const room = document.getElementById("room" + i);
+        if(room.innerHTML===e.target.innerHTML){
+          room.style.backgroundColor=trueBack;
+        }
+      }
+    }
+  }
+
+  function roomBlur(e){
+    if (e.target.classList.contains("fixed")) {
+      if (e.target.style.color == wrongColor) {
+        e.target.style.backgroundColor = wrongBack;
+      }
+      else if (e.target.style.color == trueColor) {
+        e.target.style.backgroundColor = trueBack;
+      }
+      else {
+        e.target.style.backgroundColor = "white";
+      }
+    }
+    else {
+      e.target.style.backgroundColor = "white";
+    }
+    if (e.target.innerHTML !== "") {
+      for (let i = 0; i < N; i++) {
+        const room = document.getElementById("room" + i);
+        if (room.innerHTML === e.target.innerHTML) {
+          if (room.classList.contains("fixed")) {
+            if (room.style.color == wrongColor) {
+              room.style.backgroundColor = wrongBack;
+            }
+            else if (room.style.color == trueColor) {
+              room.style.backgroundColor = trueBack;
+            }
+            else {
+              room.style.backgroundColor = "white";
+            }
+          }
+          else {
+            room.style.backgroundColor = "white";
+          }
+        }
+      }
+    }
+  }
+
   function setup(){
     for (let i = 0; i < N; i++) {
       const input = document.getElementById("room" + i);
       input.innerHTML="";
       input.tabIndex = "0";
-      input.addEventListener("focus", () => {
-        input.style.backgroundColor = trueBack;
-      });
-      input.addEventListener("blur", () => {
-        if(input.classList.contains("fixed")){
-          if(input.style.color==wrongColor){
-            input.style.backgroundColor = wrongBack;
-          }
-          else if (input.style.color == trueColor){
-            input.style.backgroundColor = trueBack;
-          }
-          else{
-            input.style.backgroundColor = "white";
-          }
-        }
-        else{
-          input.style.backgroundColor = "white";
-        }
-      });
+      input.addEventListener("focus",roomFocus);
+      input.addEventListener("blur", roomBlur);
       input.addEventListener("keydown", (e) => {
         if (e.code === "ArrowDown") {
           let j = i + 9;
@@ -559,6 +594,7 @@
   
 
   setup();
+  lock();
 
   const newgame = document.getElementById("newgame");
   newgame.addEventListener("click",getGame);
@@ -601,6 +637,10 @@
         erase.classList.remove("selected");
         button.classList.add("selected");
         select=i;
+      }
+      if(cursor!="" && !cursor.classList.contains("fixed") && cursor.innerHTML==="" && select>0){
+        cursor.innerHTML=select;
+        left--;
       }
       button.focus();
     });

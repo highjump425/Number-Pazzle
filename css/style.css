@@ -26,7 +26,7 @@ button{
   font-family: 'Yuji Syuku', serif;
   font-weight: bold;
   text-align: center;
-  font-size: min(56px,11vw);
+  font-size: min(56px,10.5vw);
   color:#FFFEF2;
   padding: 16px;
   margin-bottom: 24px;
@@ -38,7 +38,7 @@ button{
   text-align: center;
   font-family: 'Noto Sans JP', sans-serif;
   font-size: min(24px,4.8vw); 
-  margin: 16px 0;
+  margin: 20px 0;
 }
 
 .intro span{
@@ -225,6 +225,7 @@ button{
 }
 
 #timer{
+  display: inline-block;
   bottom: 0;
   color: #4c4948;
   height: calc(0.6 * min(10vw,8vh,48px));
@@ -361,18 +362,20 @@ footer{
 }
 
 .container{
-  padding: 0px 15px;
+  padding: 0px 16px;
 }
 
 footer p{
-  justify-content: right;
-  display: flex;
-  gap: 16px;
+  text-align: right;
 }
 
 footer i{
   font-size: 20px;
   color: white;
+}
+
+footer a+a{
+  padding-left: 16px;
 }
 
 footer p+p{
