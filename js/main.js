@@ -26,6 +26,7 @@
   let wrongColor="#ED1A3D";
   let trueBack = "#ABE1FA";
   let wrongBack = "#F5C9C6";
+  let focusColor="";
 
   function shuffle(arr){
     for(let i=arr.length-1;i>0;i--){
@@ -34,17 +35,42 @@
     }
   }
 
-  function roomFocus(e){
-    cursor = e.target;
-    e.target.style.backgroundColor = trueBack;
-    if(e.target.innerHTML!==""){
-      for(let i=0;i<N;i++){
-        const room = document.getElementById("room" + i);
-        if(room.innerHTML===e.target.innerHTML){
-          room.style.backgroundColor=trueBack;
+  function resetColor(){
+    let finish = (timerStop < timerStart);
+    for (let i = 0; i < N; i++) {
+      const room = document.getElementById("room" + i);
+      if(finish){
+        if (room.style.color == wrongColor) {
+          room.style.backgroundColor = wrongBack;
+        }
+        else if (room.style.color == trueColor) {
+          room.style.backgroundColor = trueBack;
+        }
+        else {
+          room.style.backgroundColor = "white";
         }
       }
+      else{
+        room.style.backgroundColor = "white";
+      }
     }
+  }
+
+  function setColor(x){
+    if(x==="")return false;
+    for (let i = 0; i < N; i++) {
+      const room = document.getElementById("room" + i);
+      if (room.innerHTML === x) {
+        room.style.backgroundColor = trueBack;
+      }
+    }
+  }
+
+  function roomFocus(e){
+    resetColor();
+    cursor = e.target;
+    e.target.style.backgroundColor = trueBack;
+    setColor(e.target.innerHTML);
   }
 
   function roomBlur(e){
@@ -91,7 +117,7 @@
       input.innerHTML="";
       input.tabIndex = "0";
       input.addEventListener("focus",roomFocus);
-      input.addEventListener("blur", roomBlur);
+      // input.addEventListener("blur", roomBlur);
       input.addEventListener("keydown", (e) => {
         if (e.code === "ArrowDown") {
           let j = i + 9;
@@ -137,6 +163,7 @@
   }
 
   function lock(){
+    endTimer();
     for (let i = 0; i < N; i++) {
       const input = document.getElementById("room" + i);
       input.innerHTML = "";
@@ -164,38 +191,56 @@
     let empty = (e.target.innerHTML=== "");
     if (e.key === "1") {
       e.target.innerHTML="1";
+      resetColor();
+      setColor(e.key);
       if(empty)left--;
     }
     else if (e.key === "2") {
       e.target.innerHTML = "2";
+      resetColor();
+      setColor(e.key);
       if (empty) left--;
     }
     else if (e.key === "3"){
       e.target.innerHTML = "3";
+      resetColor();
+      setColor(e.key);
       if (empty) left--;
     } 
     else if (e.key === "4") {
       e.target.innerHTML = "4";
+      resetColor();
+      setColor(e.key);
       if (empty) left--;
     }
     else if (e.key === "5") {
       e.target.innerHTML = "5";
+      resetColor();
+      setColor(e.key);
       if (empty) left--;
     }
     else if (e.key === "6"){
       e.target.innerHTML = "6";
+      resetColor();
+      setColor(e.key);
       if(empty)left--;
     }
     else if (e.key === "7") {
       e.target.innerHTML = "7";
+      resetColor();
+      setColor(e.key);
       if (empty) left--;
     }
     else if (e.key === "8") {
       e.target.innerHTML = "8";
+      resetColor();
+      setColor(e.key);
       if (empty) left--;
     }
     else if (e.key === "9") {
       e.target.innerHTML = "9";
+      resetColor();
+      setColor(e.key);
       if (empty) left--;
     }
     else if (e.key === "0"||e.key === "Backspace"||e.key === "Delete") {
@@ -224,6 +269,8 @@
       }
       else {
         e.target.innerHTML = select;
+        resetColor();
+        setColor(String(select));
         if(empty)left--;
       }
     }
@@ -591,8 +638,6 @@
     beginTimer();
   }
 
-  
-
   setup();
   lock();
 
@@ -640,6 +685,8 @@
       }
       if(cursor!="" && !cursor.classList.contains("fixed") && cursor.innerHTML==="" && select>0){
         cursor.innerHTML=select;
+        resetColor();
+        setColor(String(select));
         left--;
       }
       button.focus();
