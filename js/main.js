@@ -22,10 +22,11 @@
   let timerStop=performance.now();
   let timerStart = performance.now()+1;
   let cursor = "";
-  let trueColor="#235BC8";
-  let wrongColor="#ED1A3D";
-  let trueBack = "#ABE1FA";
-  let wrongBack = "#F5C9C6";
+  let normalColor="#e6e7e8";
+  let trueColor="#235bc8";
+  let wrongColor="#ed1a3d";
+  let trueBack = "#abe1fa";
+  let wrongBack = "#f5c9c6";
   let focusColor="";
 
   function shuffle(arr){
@@ -40,10 +41,10 @@
     for (let i = 0; i < N; i++) {
       const room = document.getElementById("room" + i);
       if(finish){
-        if (room.style.color == wrongColor) {
+        if (room.style.color === "rgb(237, 26, 61)") {
           room.style.backgroundColor = wrongBack;
         }
-        else if (room.style.color == trueColor) {
+        else if (room.style.color === "rgb(35, 91, 200)") {
           room.style.backgroundColor = trueBack;
         }
         else {
@@ -51,7 +52,12 @@
         }
       }
       else{
-        room.style.backgroundColor = "white";
+        if ((Math.floor(Math.floor(i / 9) / 3) + Math.floor(i % 9 / 3)) % 2 === 0) {
+          room.style.backgroundColor = normalColor;
+        }
+        else {
+          room.style.backgroundColor = "white";
+        }
       }
     }
   }
@@ -167,7 +173,12 @@
     for (let i = 0; i < N; i++) {
       const input = document.getElementById("room" + i);
       input.innerHTML = "";
-      input.style.backgroundColor="white";
+      if ((Math.floor(Math.floor(i / 9) / 3) + Math.floor(i % 9 / 3)) % 2 === 0) {
+        input.style.backgroundColor = normalColor;
+      }
+      else {
+        input.style.backgroundColor = "white";
+      }
       input.style.color="black";
       input.removeEventListener("keydown", keyInput);
       input.removeEventListener("click", tapInput);
@@ -302,7 +313,12 @@
     left=N;
     for (let i = 0; i < N; i++) {
       const input = document.getElementById("room" + i);
-      input.style.backgroundColor="white";
+      if ((Math.floor(Math.floor(i / 9) / 3) + Math.floor(i % 9 / 3)) % 2 === 0) {
+        input.style.backgroundColor = normalColor;
+      }
+      else {
+        input.style.backgroundColor = "white";
+      }
       if (place[i] !== "0") {
         left--;
         input.classList.add("fixed");
@@ -322,6 +338,7 @@
   function displayAns(){
     getTimer();
     endTimer();
+    resetColor();
     for(let i=0;i<N;i++){
       const room = document.getElementById("room" + i);
       if(init[i]!=="0"||room.classList.contains("fixed"))continue;
@@ -345,6 +362,12 @@
     beginTimer();
     for (let i = 0; i < N; i++) {
       const room = document.getElementById("room" + i);
+      if ((Math.floor(Math.floor(i / 9) / 3) + Math.floor(i % 9 / 3)) % 2 === 0) {
+        room.style.backgroundColor = normalColor;
+      }
+      else {
+        room.style.backgroundColor = "white";
+      }
       if (init[i] !== "0") {
         left--;
         continue;
@@ -353,7 +376,6 @@
       room.addEventListener("keydown", keyInput);
       room.addEventListener("click", tapInput);
       room.style.color=trueColor;
-      room.style.backgroundColor="white"
       room.innerHTML="";
     }
   }
@@ -633,6 +655,7 @@
       return;
     }
     setTools();
+    lock();
     unlock();
     display(seed);
     beginTimer();
